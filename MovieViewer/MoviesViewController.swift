@@ -10,19 +10,23 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
 
-    @IBOutlet weak var tableView: UITableView!
+//    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var errorImage: UIImageView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     var movies: [NSDictionary]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.dataSource = self
-        tableView.delegate = self
-        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        self.collectionView.backgroundColor = UIColor.blackColor()
+        self.view.backgroundColor = UIColor.blackColor()
+
+        // clicking on the errorImage will call on imageTapped
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:Selector("imageTapped:"))
         errorImage.userInteractionEnabled = true
         errorImage.addGestureRecognizer(tapGestureRecognizer)
@@ -32,7 +36,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: "refreshControlAction:", forControlEvents: UIControlEvents.ValueChanged)
-        tableView.insertSubview(refreshControl, atIndex: 0)
+        collectionView.insertSubview(refreshControl, atIndex: 0)
         
         // Do any additional setup after loading the view.
     }
@@ -45,44 +49,44 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if let movies = movies { // if movies is not nil
             return movies.count
         } else {
             return 0
         }
-        
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
+        
         
         let movie = movies![indexPath.row]
-        let title = movie["title"] as! String
-        let overview = movie["overview"] as! String
+//        let title = movie["title"] as! String
+//        let overview = movie["overview"] as! String
         
         if let posterPath = movie["poster_path"] as? String {
             let baseURL = "http://image.tmdb.org/t/p/w500"
             let imageURL = NSURL(string: baseURL + posterPath)
-            cell.posterView.setImageWithURL(imageURL!)
+            cell.posterImage.setImageWithURL(imageURL!)
         }
         else {
             // No poster image. Can either set to nil (no image) or a default movie poster image
             // that you include as an asset
-            cell.posterView.image = nil
+            cell.posterImage.image = nil
         }
         
         
-        cell.titleLabel.text = title
-        cell.overviewLabel.text = overview
+//        cell.titleLabel.text = title
+//        cell.overviewLabel.text = overview
         
         
-        
-        
-        print("row \(indexPath.row)")
         return cell
     }
+
     
     func loadDataFromNetwork() {
         
@@ -113,8 +117,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                         data, options:[]) as? NSDictionary {
                             NSLog("response: \(responseDictionary)")
                             
-                            self.movies = responseDictionary["results"] as! [NSDictionary]
-                            self.tableView.reloadData()
+                            self.movies = responseDictionary["results"] as? [NSDictionary]
+                            self.collectionView.reloadData()
                             self.errorImage.hidden = true
                     }
                 }
@@ -154,8 +158,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                         data, options:[]) as? NSDictionary {
                             NSLog("response: \(responseDictionary)")
                             
-                            self.movies = responseDictionary["results"] as! [NSDictionary]
-                            self.tableView.reloadData()
+                            self.movies = responseDictionary["results"] as? [NSDictionary]
+                            self.collectionView.reloadData()
                             self.errorImage.hidden = true
                     }
                 }
