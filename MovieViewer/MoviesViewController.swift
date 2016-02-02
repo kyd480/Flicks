@@ -74,8 +74,9 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
 //        let title = movie["title"] as! String
 //        let overview = movie["overview"] as! String
         
+        let baseURL = "http://image.tmdb.org/t/p/w500"
+        
         if let posterPath = movie["poster_path"] as? String {
-            let baseURL = "http://image.tmdb.org/t/p/w500"
             let imageURL = NSURL(string: baseURL + posterPath)
             cell.posterImage.setImageWithURL(imageURL!)
         }
@@ -224,14 +225,25 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         task.resume()
     }
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let cell = sender as! UICollectionViewCell
+        let indexPath = collectionView.indexPathForCell(cell)
+        let movie = movies![indexPath!.row]
+        
+        let detailedViewController = segue.destinationViewController as! DetailViewController
+        
+        detailedViewController.movie = movie
+        
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+
+    
+    
 
 }
