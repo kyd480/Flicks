@@ -10,13 +10,16 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MoviesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
 
 //    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var errorImage: UIImageView!
     @IBOutlet weak var collectionView: UICollectionView!
+//    @IBOutlet weak var searchBar: UISearchBar!
     
     var movies: [NSDictionary]?
+//    var movieTitles: [String] = []
+//    var data: [String]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +27,7 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         collectionView.dataSource = self
         collectionView.delegate = self
         self.collectionView.backgroundColor = UIColor.blackColor()
-        self.view.backgroundColor = UIColor.blackColor()
+//        searchBar.delegate = self
 
         // clicking on the errorImage will call on imageTapped
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:Selector("imageTapped:"))
@@ -32,6 +35,9 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         errorImage.addGestureRecognizer(tapGestureRecognizer)
         
         loadDataFromNetwork()
+        
+//        data = movieTitles
+        errorImage.hidden = true
         
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
@@ -80,13 +86,58 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         }
         
         
-//        cell.titleLabel.text = title
+        cell.titleLabel = title
+        
+//        print("\(indexPath.row)")
+//        movieTitles[indexPath.row] = title
+//        movieTitles.append(title)
+//        print(movieTitles)
 //        cell.overviewLabel.text = overview
         
         
         return cell
     }
-
+    
+//    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+//        movieTitles = searchText.isEmpty ? data : data.filter({(dataString: String) -> Bool in
+//            return dataString.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil
+//        })
+//        
+//    }
+    
+/**    // This method updates filteredData based on the text in the Search Box
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        // When there is no text, filteredData is the same as the original data
+        if searchText.isEmpty {
+            movieTitles = data
+            print(movieTitles)
+        } else {
+            // The user has entered text into the search box
+            // Use the filter method to iterate over all items in the data array
+            // For each item, return true if the item should be included and false if the
+            // item should NOT be included
+            print(movieTitles)
+            movieTitles = data.filter({(dataItem: String) -> Bool in
+                // If dataItem matches the searchText, return true to include it
+                if dataItem.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        }
+        collectionView.reloadData()
+    }
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = true
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+    } */
     
     func loadDataFromNetwork() {
         
