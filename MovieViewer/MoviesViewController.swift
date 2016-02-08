@@ -12,12 +12,14 @@ import MBProgressHUD
 
 class MoviesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
 
-//    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var errorImageView: UIView!
     @IBOutlet weak var errorImage: UIImageView!
     @IBOutlet weak var collectionView: UICollectionView!
 //    @IBOutlet weak var searchBar: UISearchBar!
     
     var movies: [NSDictionary]?
+    var endpoint: String!
+
 //    var movieTitles: [String] = []
 //    var data: [String]!
     
@@ -37,12 +39,14 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         loadDataFromNetwork()
         
 //        data = movieTitles
-        errorImage.hidden = true
+//        errorImage.hidden = true
+        errorImageView.hidden = true
         
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: "refreshControlAction:", forControlEvents: UIControlEvents.ValueChanged)
         collectionView.insertSubview(refreshControl, atIndex: 0)
+        
         
         // Do any additional setup after loading the view.
     }
@@ -85,6 +89,10 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
             // that you include as an asset
             cell.posterImage.image = nil
         }
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.redColor()
+        cell.selectedBackgroundView = backgroundView
         
         
         cell.titleLabel = title
@@ -146,7 +154,7 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         // Configure session so that completion handler is executed on main UI thread
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let url = NSURL(string:"https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
         let request = NSURLRequest(URL: url!)
         let session = NSURLSession(
             configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
@@ -171,11 +179,13 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
                             
                             self.movies = responseDictionary["results"] as? [NSDictionary]
                             self.collectionView.reloadData()
-                            self.errorImage.hidden = true
+//                            self.errorImage.hidden = true
+                            self.errorImageView.hidden = true
                     }
                 }
                 else {
-                    self.errorImage.hidden = false
+//                    self.errorImage.hidden = false
+                    self.errorImageView.hidden = false
                 }
                 
         });
@@ -191,7 +201,7 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         // Configure session so that completion handler is executed on main UI thread
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let url = NSURL(string:"https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
         let request = NSURLRequest(URL: url!)
         let session = NSURLSession(
             configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
@@ -212,11 +222,13 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
                             
                             self.movies = responseDictionary["results"] as? [NSDictionary]
                             self.collectionView.reloadData()
-                            self.errorImage.hidden = true
+//                            self.errorImage.hidden = true
+                            self.errorImageView.hidden = true
                     }
                 }
                 else {
-                    self.errorImage.hidden = false
+//                    self.errorImage.hidden = false
+                    self.errorImageView.hidden = true
                 }
                 
                 // Tell the refreshControl to stop spinning
@@ -224,7 +236,6 @@ class MoviesViewController: UIViewController, UICollectionViewDataSource, UIColl
         });
         task.resume()
     }
-
     
     // MARK: - Navigation
 
